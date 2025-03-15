@@ -1,9 +1,55 @@
+Hugging Face's logo
+Hugging Face
+Models
+Datasets
+Spaces
+Posts
+Docs
+Enterprise
+Pricing
+
+
+
+Spaces:
+
+Prajjwalng
+/
+customercare
+
+
+like
+0
+
+App
+Files
+Community
+Settings
+customercare
+/
+app.py
+
+Prajjwalng's picture
+Prajjwalng
+Update app.py
+e3cc7e5
+verified
+less than a minute ago
+raw
+
+Copy download link
+history
+blame
+edit
+delete
+
+4.02 kB
 import streamlit as st
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 import os
 from huggingface_hub import login
 from peft import PeftModel, PeftConfig
+import time
 
 # Login with HF_TOKEN (if available)
 hf_token = os.environ.get("HF_TOKEN")
@@ -18,7 +64,7 @@ else:
 
 # Model and Adapter Configuration
 model_id = "Prajjwalng/gemma_customer_care"  # Base model
-adapter_id = "Prajjwalng/gemma_customercare_adapters" #adapter model
+adapter_id = "Prajjwalng/gemma_customercare_adapters"  # adapter model
 
 # Initialize model and tokenizer (load only once)
 @st.cache_resource
@@ -32,7 +78,7 @@ def load_model(model_id):
     )
 
     tokenizer = AutoTokenizer.from_pretrained(model_id, add_eos_token=True)
-    return base_model,tokenizer
+    return base_model, tokenizer
 
 merged_model, tokenizer = load_model(model_id)
 
@@ -43,11 +89,8 @@ def get_completion(query: str, model, tokenizer) -> str:
     prompt_template = f"""
 <start_of_turn>system You are a support chatbot who helps with user queries chatbot who always responds in the style of a professional.\n<end_of_turn>
 <start_of_turn>user
-
-
 {query}
 <end_of_turn>
-
 <start_of_turn>model
 """
     prompt = prompt_template.format(query=query)
@@ -69,6 +112,9 @@ st.title("Customer Care ChatBot")
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
+    # Add initial welcome message
+    initial_message = {"role": "assistant", "content": "Hi, I am Sora, I am your customer support agent."}
+    st.session_state.messages.append(initial_message)
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
@@ -86,11 +132,21 @@ if prompt := st.chat_input("How can I help you?"):
     # Generate and display chatbot response
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
+        typing_placeholder = st.empty()
+        typing_dots = ""  # Initialize empty string for typing dots
+
+        # Animate typing dots
+        for i in range(3):
+            typing_dots += "."
+            typing_placeholder.markdown(typing_dots)
+            time.sleep(0.3)  # Adjust speed as needed
+
+        typing_placeholder.empty()  # Clear typing dots
+
         full_response = ""
         response = get_completion(prompt, merged_model, tokenizer)
 
         # Simulate stream of responses with milliseconds delay
-        import time
         for chunk in response.split():
             full_response += chunk + " "
             time.sleep(0.05)
