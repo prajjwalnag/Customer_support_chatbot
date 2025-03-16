@@ -8,4 +8,4 @@ I have written an article on this  [Read More](https://medium.com/@makewithrex/f
 
 
 
-![image](./images/Chatbot1.jpg)
+![image](./images/Chatbot1.JPG)
