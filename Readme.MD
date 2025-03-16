@@ -1,5 +1,5 @@
 # Customer Support Agent
-
+![image](./images/icon.png)
 ## Table of Contents
 
 - [Model](#model)
